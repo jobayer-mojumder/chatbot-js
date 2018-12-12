@@ -87,11 +87,11 @@
 	];
 	
 	var element = $('.floating-chat');
-	var myStorage = localStorage;
+	//var myStorage = localStorage;
 
-	if (!myStorage.getItem('chatID')) {
+	/*if (!myStorage.getItem('chatID')) {
 		myStorage.setItem('chatID', createUUID());
-	}
+	}*/
 
 	setTimeout(function() {
 		element.addClass('enter');
@@ -99,7 +99,7 @@
 
 	element.click(openElement);
 
-	//enter button press send
+	//enter press send
 	$('#message-text-box').keyup(function(){
 		event.preventDefault();
 		if (event.keyCode === 13) {
@@ -134,79 +134,78 @@
 		}, 500);
 	}
 
-	function createUUID() {
-    // http://www.ietf.org/rfc/rfc4122.txt
-    var s = [];
-    var hexDigits = "0123456789abcdef";
-    for (var i = 0; i < 36; i++) {
-    	s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+	/*function createUUID() {
+		var s = [];
+		var hexDigits = "0123456789abcdef";
+		for (var i = 0; i < 36; i++) {
+			s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+		}
+		s[14] = "4";
+		s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);
+		s[8] = s[13] = s[18] = s[23] = "-";
+
+		var uuid = s.join("");
+		return uuid;
+	}*/
+
+	function sendNewMessage() {
+		var userInput = $('.text-box');
+		var newMessage = userInput.html().replace(/\<div\>|\<br.*?\>/ig, '\n').replace(/\<\/div\>/g, '').trim().replace(/\n/g, '<br>');
+
+		if (!newMessage) return;
+
+		//console.log(newMessage);
+
+		var messagesContainer = $('.messages');
+
+		messagesContainer.append([
+			'<li class="other">',
+			newMessage,
+			'</li>'
+			].join(''));
+
+    	// clean out old message
+    	userInput.html('');
+    	// focus on input
+    	userInput.focus();
+
+    	messagesContainer.finish().animate({
+    		scrollTop: messagesContainer.prop("scrollHeight")
+    	}, 250);
+
+    	setTimeout(function(){
+    		replyMessage();
+    	}, 500);
     }
-    s[14] = "4"; // bits 12-15 of the time_hi_and_version field to 0010
-    s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1); // bits 6-7 of the clock_seq_hi_and_reserved to 01
-    s[8] = s[13] = s[18] = s[23] = "-";
-
-    var uuid = s.join("");
-    return uuid;
-}
-
-function sendNewMessage() {
-	var userInput = $('.text-box');
-	var newMessage = userInput.html().replace(/\<div\>|\<br.*?\>/ig, '\n').replace(/\<\/div\>/g, '').trim().replace(/\n/g, '<br>');
-
-	if (!newMessage) return;
-
-	//console.log(newMessage);
-
-	var messagesContainer = $('.messages');
-
-	messagesContainer.append([
-		'<li class="other">',
-		newMessage,
-		'</li>'
-		].join(''));
-
-    // clean out old message
-    userInput.html('');
-    // focus on input
-    userInput.focus();
-
-    messagesContainer.finish().animate({
-    	scrollTop: messagesContainer.prop("scrollHeight")
-    }, 250);
-
-    setTimeout(function(){
-    	replyMessage();
-    }, 500);
-}
 
 
-function replyMessage() {
-	var random = getRandom();
-	console.log(random);
-	var newMessage = sampledata[random].response;
+    function replyMessage() {
+    	var random = getRandom();
+    	console.log(random);
+    	var newMessage = sampledata[random].response;
 
-	if (!newMessage) return;
+    	if (!newMessage) return;
 
-	var messagesContainer = $('.messages');
-	messagesContainer.append([
-		'<li class="self">',
-		newMessage,
-		'</li>'
-		].join(''));
-	messagesContainer.finish().animate({
-		scrollTop: messagesContainer.prop("scrollHeight")
-	}, 250);
-}
+    	var messagesContainer = $('.messages');
+    	messagesContainer.append([
+    		'<li class="self">',
+    		newMessage,
+    		'</li>'
+    		].join(''));
+    	messagesContainer.finish().animate({
+    		scrollTop: messagesContainer.prop("scrollHeight")
+    	}, 250);
+    }
 
-function onMetaAndEnter(event) {
-	if ((event.metaKey || event.ctrlKey) && event.keyCode == 13) {
-		sendNewMessage();
-	}
-}
+    function onMetaAndEnter(event) {
+    	if ((event.metaKey || event.ctrlKey) && event.keyCode == 13) {
+    		sendNewMessage();
+    	}
+    }
 
-function getRandom(){
-	return Math.floor((Math.random() * 10) + 1);
-}
+    function getRandom(){
+    	return Math.floor((Math.random() * 10) + 1);
+    }
 
 </script>
 </html>
