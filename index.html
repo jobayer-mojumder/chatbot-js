@@ -35,63 +35,17 @@
 
 <script>
 
-	var sampledata = [
-	{
-		"question": "hi",
-		"response": "Hello, How can i help you?"
-	},
+	var sampledata;
 
-	{
-		"question": "I want loan",
-		"response": "what kind of loan do you want?"
-	},
-	{
-		"question": "home loan",
-		"response": "here is home loan link"
-	},
-	{
-		"question": "Car loan",
-		"response": "here is ecar loan link"
-	},
-	{
-		"question": "Education loan",
-		"response": "here is education loan link"
-	},
-	{
-		"question": "Plane Loan",
-		"response": "here is plane loan link"
-	},
-	{
-		"question": "House loan",
-		"response": "here is House loan link"
-	},
-	{
-		"question": "Smiley",
-		"response": "Hi! I am Alena. How can I help you?"
-	},
-	{
-		"question": "Smiley",
-		"response": "How can I help you?"
-	},
+	fetch('http://localhost/admin/api/chatbot').then(response => {
+		return response.json();
+	}).then(data => {
+		sampledata = data;
+	}).catch(err => {
+		alert('Something wrong in Chatbot! Please contact with BlackOps.');
+	});
 
-	{
-		"question": "Smiley",
-		"response": "Hi! I am Alena."
-	},
-
-	{
-		"question": "Smiley",
-		"response": "Sorry! Something went wrong!"
-	},
-
-	];
-	
 	var element = $('.floating-chat');
-	//var myStorage = localStorage;
-
-	/*if (!myStorage.getItem('chatID')) {
-		myStorage.setItem('chatID', createUUID());
-	}*/
 
 	setTimeout(function() {
 		element.addClass('enter');
@@ -134,20 +88,6 @@
 		}, 500);
 	}
 
-	/*function createUUID() {
-		var s = [];
-		var hexDigits = "0123456789abcdef";
-		for (var i = 0; i < 36; i++) {
-			s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
-		}
-		s[14] = "4";
-		s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);
-		s[8] = s[13] = s[18] = s[23] = "-";
-
-		var uuid = s.join("");
-		return uuid;
-	}*/
-
 	function sendNewMessage() {
 		var userInput = $('.text-box');
 		var newMessage = userInput.html().replace(/\<div\>|\<br.*?\>/ig, '\n').replace(/\<\/div\>/g, '').trim().replace(/\n/g, '<br>');
@@ -174,17 +114,17 @@
     	}, 250);
 
     	setTimeout(function(){
-    		replyMessage();
+    		replyMessage(newMessage);
     	}, 500);
     }
 
 
-    function replyMessage() {
-    	var random = getRandom();
-    	console.log(random);
-    	var newMessage = sampledata[random].response;
+    function replyMessage(message) {
+    	var newMessage = getBestreply(message);;
 
-    	if (!newMessage) return;
+    	if (!newMessage){
+    		newMessage = "I can tell you are upset. If my answers were not helpful, you can reach us through our contact number or email.";
+    	}
 
     	var messagesContainer = $('.messages');
     	messagesContainer.append([
@@ -203,8 +143,35 @@
     	}
     }
 
-    function getRandom(){
-    	return Math.floor((Math.random() * 10) + 1);
+    function getBestreply(question){
+    	var reply = 0;
+    	var reply_length = 0;
+    	var demo_length = 0;
+
+    	var q_slice = question.toLowerCase().split(" ");
+    	var length_q = question.length;
+
+
+    	for(var i = 0; i < sampledata.length; i++) {
+    		var obj = sampledata[i];
+    		for(var j = 0; j<length_q; j++){
+    			if (sampledata[i].question.toLowerCase().indexOf(q_slice[j]) >= 0 ) {
+    				demo_length++;
+    			}
+    		}
+
+    		demo_length = parseInt((demo_length/length_q)*100);
+
+    		console.log(sampledata[i].question.toLowerCase()+'---'+demo_length+'---'+reply_length);
+
+    		if (demo_length > reply_length) {
+    			reply_length = demo_length;
+    			reply = sampledata[i].answer;
+    		}
+
+    		demo_length = 0
+    	}
+    	return reply;
     }
 
 </script>
