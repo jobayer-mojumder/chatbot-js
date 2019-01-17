@@ -263,9 +263,9 @@ body {
 .server{
   border-radius: 4px;
   border: solid 1px #ababab;
-  padding: 5px 10px;
+  padding: 8px 10px;
   margin-right: 5px;
-  font-size: 12px;
+  font-size: 13px;
   color: #344548;
   display: inline-block;
   margin-bottom: 10px;
@@ -275,4 +275,7 @@ body {
 .server:hover{
   background-color: rgba(34, 112, 215, 1); 
   color: white; 
+}
+.server-link{
+  width: 100%;
 }
